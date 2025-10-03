@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Kids Shape Match</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Marker Felt', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .game-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 800px;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #ff6b6b;
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .instructions {
+            background-color: #ffd166;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            color: #333;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin: 20px 0;
+        }
+        
+        .puzzle-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            background-color: #e0f7fa;
+            padding: 20px;
+            border-radius: 20px;
+            min-height: 300px;
+            align-items: center;
+            justify-items: center;
+        }
+        
+        .puzzle-slot {
+            width: 100px;
+            height: 100px;
+            border: 4px dashed #4ecdc4;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .puzzle-slot::before {
+            content: attr(data-outline);
+            font-size: 40px;
+            opacity: 0.3;
+            color: #4ecdc4;
+        }
+        
+        .puzzle-slot.filled {
+            border-style: solid;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(78, 205, 196, 0.5);
+        }
+        
+        .puzzle-slot.filled::before {
+            opacity: 0;
+        }
+        
+        .shape {
+            width: 80px;
+            height: 80px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            cursor: grab;
+            user-select: none;
+            transition: transform 0.2s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .shape:active {
+            cursor: grabbing;
+            transform: scale(1.1);
+        }
+        
+        .shapes-bank {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 20px;
+            background-color: #ff9a9e;
+            border-radius: 20px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        #reset-btn {
+            background-color: #ff6b6b;
+            color: white;
+        }
+        
+        #next-btn {
+            background-color: #4ecdc4;
+            color: white;
+            display: none;
+        }
+        
+        .success-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .success-content {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .success-content h2 {
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .success-content p {
+            color: #ffd166;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #ff6b6b;
+            border-radius: 50%;
+            animation: confetti-fall 5s linear forwards;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .puzzle-board {
+                grid-template-columns: repeat(2, 1fr);
+                min-height: 350px;
+            }
+            
+            .shape {
+                width: 70px;
+                height: 70px;
+                font-size: 35px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>✨ Smart Kids Shape Match ✨</h1>
+        
+        <div class="instructions">
+            <p>Drag the shapes to the matching outlines! Complete the puzzle to win!</p>
+        </div>
+        
+        <div class="game-area">
+            <div class="puzzle-board" id="puzzle-board">
+                <!-- Puzzle slots will be generated here -->
+            </div>
+            
+            <div class="shapes-bank" id="shapes-bank">
+                <!-- Shapes will be generated here -->
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="reset-btn">Reset Puzzle</button>
+            <button id="next-btn">Next Puzzle!</button>
+        </div>
+    </div>
+    
+    <div class="success-message" id="success-message">
+        <div class="success-content">
+            <h2>🎉 Great Job! 🎉</h2>
+            <p>You're so smart!</p>
+            <button id="play-again-btn">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const puzzleBoard = document.getElementById('puzzle-board');
+            const shapesBank = document.getElementById('shapes-bank');
+            const resetBtn = document.getElementById('reset-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const successMessage = document.getElementById('success-message');
+            const playAgainBtn = document.getElementById('play-again-btn');
+            
+            // Puzzle data - each puzzle has slots and shapes
+            const puzzles = [
+                {
+                    slots: ['circle', 'square', 'triangle'],
+                    shapes: ['circle', 'square', 'triangle']
+                },
+                {
+                    slots: ['star', 'heart', 'diamond'],
+                    shapes: ['star', 'heart', 'diamond']
+                },
+                {
+                    slots: ['circle', 'star', 'heart', 'square'],
+                    shapes: ['circle', 'star', 'heart', 'square']
+                }
+            ];
+            
+            let currentPuzzleIndex = 0;
+            let draggedShape = null;
+            
+            // Emoji representations for shapes
+            const shapeEmojis = {
+                circle: '🔵',
+                square: '🟦',
+                triangle: '🔺',
+                star: '⭐',
+                heart: '❤️',
+                diamond: '🔶'
+            };
+            
+            // Initialize the game
+            function initGame() {
+                const currentPuzzle = puzzles[currentPuzzleIndex];
+                
+                // Clear the board
+                puzzleBoard.innerHTML = '';
+                shapesBank.innerHTML = '';
+                
+                // Create puzzle slots with outline emojis
+                currentPuzzle.slots.forEach((shapeType, index) => {
+                    const slot = document.createElement('div');
+                    slot.className = 'puzzle-slot';
+                    slot.dataset.shape = shapeType;
+                    slot.dataset.slotIndex = index;
+                    slot.dataset.outline = shapeEmojis[shapeType]; // This will be used in CSS ::before
+                    puzzleBoard.appendChild(slot);
+                });
+                
+                // Create shapes in random order
+                const shuffledShapes = [...currentPuzzle.shapes].sort(() => Math.random() - 0.5);
+                shuffledShapes.forEach(shapeType => {
+                    const shape = document.createElement('div');
+                    shape.className = 'shape';
+                    shape.dataset.shape = shapeType;
+                    shape.innerHTML = shapeEmojis[shapeType];
+                    shape.draggable = true;
+                    shapesBank.appendChild(shape);
+                });
+                
+                // Add event listeners to shapes
+                document.querySelectorAll('.shape').forEach(shape => {
+                    shape.addEventListener('dragstart', handleDragStart);
+                    shape.addEventListener('dragend', handleDragEnd);
+                });
+                
+                // Add event listeners to slots
+                document.querySelectorAll('.puzzle-slot').forEach(slot => {
+                    slot.addEventListener('dragover', handleDragOver);
+                    slot.addEventListener('dragenter', handleDragEnter);
+                    slot.addEventListener('dragleave', handleDragLeave);
+                    slot.addEventListener('drop', handleDrop);
+                });
+                
+                // Hide next button
+                nextBtn.style.display = 'none';
+            }
+            
+            // Drag and drop event handlers
+            function handleDragStart(e) {
+                draggedShape = e.target;
+                setTimeout(() => e.target.classList.add('hide'), 0);
+            }
+            
+            function handleDragEnd(e) {
+                e.target.classList.remove('hide');
+                draggedShape = null;
+            }
+            
+            function handleDragOver(e) {
+                e.preventDefault();
+            }
+            
+            function handleDragEnter(e) {
+                e.preventDefault();
+                e.target.classList.add('drag-over');
+            }
+            
+            function handleDragLeave(e) {
+                e.target.classList.remove('drag-over');
+            }
+            
+            function handleDrop(e) {
+                e.preventDefault();
+                e.target.classList.remove('drag-over');
+                
+                if (draggedShape) {
+                    const shapeType = draggedShape.dataset.shape;
+                    const slotShape = e.target.dataset.shape;
+                    
+                    // Check if the shape matches the slot
+                    if (shapeType === slotShape) {
+                        // Remove shape from bank
+                        draggedShape.remove();
+                        
+                        // Place shape in slot
+                        e.target.innerHTML = shapeEmojis[shapeType];
+                        e.target.classList.add('filled');
+                        
+                        // Check if puzzle is complete
+                        checkPuzzleComplete();
+                    }
+                }
+            }
+            
+            // Check if all slots are filled correctly
+            function checkPuzzleComplete() {
+                const filledSlots = document.querySelectorAll('.puzzle-slot.filled');
+                const totalSlots = document.querySelectorAll('.puzzle-slot').length;
+                
+                if (filledSlots.length === totalSlots) {
+                    // Show success message
+                    setTimeout(() => {
+                        showSuccessMessage();
+                    }, 500);
+                }
+            }
+            
+            // Show success message with confetti
+            function showSuccessMessage() {
+                // Create confetti
+                for (let i = 0; i < 150; i++) {
+                    createConfetti();
+                }
+                
+                successMessage.style.opacity = '1';
+                successMessage.style.pointerEvents = 'auto';
+                
+                // Show next button if there are more puzzles
+                if (currentPuzzleIndex < puzzles.length - 1) {
+                    nextBtn.style.display = 'inline-block';
+                }
+            }
+            
+            // Create confetti effect
+            function createConfetti() {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = getRandomColor();
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                document.body.appendChild(confetti);
+                
+                // Remove confetti after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+            
+            function getRandomColor() {
+                const colors = ['#ff6b6b', '#4ecdc4', '#ffd166', '#6a0572', '#118ab2', '#06d6a0'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+            // Event listeners for buttons
+            resetBtn.addEventListener('click', initGame);
+            
+            nextBtn.addEventListener('click', () => {
+                currentPuzzleIndex++;
+                successMessage.style.opacity = '0';
+                successMessage.style.pointerEvents = 'none';
+                initGame();
+            });
+            
+            playAgainBtn.addEventListener('click', () => {
+                currentPuzzleIndex = 0;
+                successMessage.style.opacity = '0';
+                successMessage.style.pointerEvents = 'none';
+                initGame();
+            });
+            
+            // Initialize the first puzzle
+            initGame();
+        });
+    </script>
+</body>
+</html>

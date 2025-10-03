@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Shape Sorter</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Comic Sans MS', cursive, sans-serif; 
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            padding: 10px;
+        }
+        .game-container { 
+            width: 100%; 
+            max-width: 500px; 
+            background: white; 
+            border-radius: 20px; 
+            padding: 20px; 
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 { 
+            color: #6a0572; 
+            font-size: 2.2rem; 
+            margin-bottom: 15px;
+        }
+        .instructions { 
+            background: #ffd166; 
+            padding: 12px; 
+            border-radius: 15px; 
+            margin: 15px 0;
+        }
+        .bins { 
+            display: flex; 
+            justify-content: space-around; 
+            margin: 20px 0; 
+            flex-wrap: wrap;
+        }
+        .bin { 
+            width: 80px; 
+            height: 80px; 
+            border: 3px dashed #4ecdc4; 
+            border-radius: 15px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 2rem; 
+            margin: 10px;
+            background: rgba(78, 205, 196, 0.1);
+        }
+        .shapes-area { 
+            min-height: 150px; 
+            background: #f8f9fa; 
+            border-radius: 15px; 
+            padding: 15px; 
+            margin: 15px 0;
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 10px;
+            border: 2px solid #4ecdc4;
+        }
+        .shape-item { 
+            width: 60px; 
+            height: 60px; 
+            border-radius: 10px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 2rem; 
+            cursor: grab;
+            user-select: none;
+            transition: transform 0.2s;
+        }
+        .shape-item:active { 
+            cursor: grabbing; 
+            transform: scale(1.1);
+        }
+        button { 
+            padding: 12px 25px; 
+            font-size: 1.1rem; 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-weight: bold;
+            background: #6a0572; 
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🔷 Shape Sorter</h1>
+        <div class="instructions">
+            <p>Drag shapes to their matching bins!</p>
+        </div>
+        <div class="bins">
+            <div class="bin" data-type="circle">🔵</div>
+            <div class="bin" data-type="square">🟦</div>
+            <div class="bin" data-type="triangle">🔺</div>
+            <div class="bin" data-type="star">⭐</div>
+        </div>
+        <div class="shapes-area" id="shapes-area">
+            <!-- Shapes will be generated here -->
+        </div>
+        <button id="reset-btn">New Game</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const shapesArea = document.getElementById('shapes-area');
+            const resetBtn = document.getElementById('reset-btn');
+            const bins = document.querySelectorAll('.bin');
+            
+            const shapes = [
+                { type: 'circle', emoji: '🔵' },
+                { type: 'square', emoji: '🟦' },
+                { type: 'triangle', emoji: '🔺' },
+                { type: 'star', emoji: '⭐' }
+            ];
+            
+            let draggedShape = null;
+            
+            function createGame() {
+                shapesArea.innerHTML = '';
+                
+                // Create 12 random shapes
+                for (let i = 0; i < 12; i++) {
+                    const shape = shapes[Math.floor(Math.random() * shapes.length)];
+                    const shapeEl = document.createElement('div');
+                    shapeEl.className = 'shape-item';
+                    shapeEl.dataset.type = shape.type;
+                    shapeEl.innerHTML = shape.emoji;
+                    shapeEl.draggable = true;
+                    
+                    shapeEl.addEventListener('dragstart', (e) => {
+                        draggedShape = shapeEl;
+                        setTimeout(() => shapeEl.style.opacity = '0.4', 0);
+                    });
+                    
+                    shapeEl.addEventListener('dragend', () => {
+                        shapeEl.style.opacity = '1';
+                        draggedShape = null;
+                    });
+                    
+                    shapesArea.appendChild(shapeEl);
+                }
+                
+                // Add drag events to bins
+                bins.forEach(bin => {
+                    bin.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                    });
+                    
+                    bin.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        if (draggedShape && draggedShape.dataset.type === bin.dataset.type) {
+                            // Correct match
+                            draggedShape.remove();
+                            
+                            // Check if all shapes are sorted
+                            if (shapesArea.children.length === 0) {
+                                setTimeout(() => {
+                                    alert('Perfect! All shapes sorted correctly!');
+                                }, 300);
+                            }
+                        }
+                    });
+                });
+            }
+            
+            resetBtn.addEventListener('click', createGame);
+            createGame();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Color Match Challenge</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Comic Sans MS', cursive, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            padding: 10px;
+            overflow: hidden;
+        }
+        .game-container { 
+            width: 100%; 
+            max-width: 500px; 
+            background: white; 
+            border-radius: 20px; 
+            padding: 20px; 
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 { 
+            color: #ff6b6b; 
+            font-size: 2.2rem; 
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .stats { 
+            display: flex; 
+            justify-content: space-around; 
+            background: #ffd166; 
+            padding: 12px; 
+            border-radius: 15px; 
+            margin: 15px 0;
+        }
+        .game-area { 
+            height: 400px; 
+            position: relative; 
+            background: #f8f9fa; 
+            border-radius: 15px; 
+            overflow: hidden;
+            margin: 15px 0;
+            border: 3px solid #4ecdc4;
+        }
+        .color-bin { 
+            position: absolute; 
+            bottom: 0; 
+            width: 25%; 
+            height: 80px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .color-bin:active { transform: scale(0.95); }
+        .shape { 
+            position: absolute; 
+            width: 60px; 
+            height: 60px; 
+            border-radius: 10px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 2rem; 
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        .controls { 
+            display: flex; 
+            justify-content: center; 
+            gap: 15px; 
+            margin-top: 15px; 
+        }
+        button { 
+            padding: 12px 25px; 
+            font-size: 1.1rem; 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        #start-btn { background: #4ecdc4; color: white; }
+        #reset-btn { background: #ff6b6b; color: white; }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1> Color Match Challenge</h1>
+        <div class="stats">
+            <div>Score: <span id="score">0</span></div>
+            <div>Lives: <span id="lives">3</span></div>
+        </div>
+        <div class="game-area" id="game-area">
+            <!-- Shapes and bins will be generated here -->
+        </div>
+        <div class="controls">
+            <button id="start-btn">Start Game</button>
+            <button id="reset-btn">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const gameArea = document.getElementById('game-area');
+            const scoreEl = document.getElementById('score');
+            const livesEl = document.getElementById('lives');
+            const startBtn = document.getElementById('start-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            
+            const colors = [
+                { name: 'red', emoji: '🔴', color: '#e74c3c' },
+                { name: 'blue', emoji: '🔵', color: '#3498db' },
+                { name: 'green', emoji: '🟢', color: '#2ecc71' },
+                { name: 'yellow', emoji: '🟡', color: '#f1c40f' }
+            ];
+            
+            let score = 0;
+            let lives = 3;
+            let gameActive = false;
+            let shapes = [];
+            let gameLoop;
+            
+            // Create color bins
+            function createBins() {
+                gameArea.innerHTML = '';
+                colors.forEach((color, index) => {
+                    const bin = document.createElement('div');
+                    bin.className = 'color-bin';
+                    bin.dataset.color = color.name;
+                    bin.style.left = `${index * 25}%`;
+                    bin.style.backgroundColor = color.color;
+                    bin.innerHTML = color.emoji;
+                    bin.addEventListener('click', () => handleBinClick(color.name));
+                    gameArea.appendChild(bin);
+                });
+            }
+            
+            function handleBinClick(binColor) {
+                if (!gameActive) return;
+                
+                // Find shapes that match this bin
+                const matchingShapes = shapes.filter(shape => 
+                    shape.color === binColor && shape.element
+                );
+                
+                matchingShapes.forEach(shape => {
+                    if (shape.element) {
+                        shape.element.remove();
+                        score += 10;
+                        scoreEl.textContent = score;
+                    }
+                });
+                
+                // Remove matched shapes from array
+                shapes = shapes.filter(shape => 
+                    !(shape.color === binColor && matchingShapes.includes(shape))
+                );
+            }
+            
+            function createShape() {
+                if (!gameActive) return;
+                
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const shape = document.createElement('div');
+                shape.className = 'shape';
+                shape.innerHTML = color.emoji;
+                shape.style.backgroundColor = color.color;
+                shape.style.left = `${Math.random() * 70 + 10}%`;
+                shape.style.top = '-60px';
+                
+                gameArea.appendChild(shape);
+                
+                shapes.push({
+                    element: shape,
+                    color: color.name,
+                    top: -60
+                });
+            }
+            
+            function updateShapes() {
+                shapes.forEach((shape, index) => {
+                    if (!shape.element) return;
+                    
+                    shape.top += 2;
+                    shape.element.style.top = `${shape.top}px`;
+                    
+                    // Check if shape reached bottom
+                    if (shape.top > gameArea.clientHeight - 140) {
+                        shape.element.remove();
+                        lives--;
+                        livesEl.textContent = lives;
+                        
+                        if (lives <= 0) {
+                            endGame();
+                        }
+                        
+                        shapes.splice(index, 1);
+                    }
+                });
+            }
+            
+            function gameUpdate() {
+                updateShapes();
+            }
+            
+            function startGame() {
+                if (gameActive) return;
+                
+                score = 0;
+                lives = 3;
+                shapes = [];
+                gameActive = true;
+                scoreEl.textContent = score;
+                livesEl.textContent = lives;
+                
+                createBins();
+                
+                // Create shapes every 1.5 seconds
+                const shapeInterval = setInterval(() => {
+                    if (gameActive) createShape();
+                }, 1500);
+                
+                gameLoop = setInterval(gameUpdate, 50);
+                
+                startBtn.textContent = 'Pause';
+            }
+            
+            function pauseGame() {
+                gameActive = false;
+                startBtn.textContent = 'Resume';
+            }
+            
+            function endGame() {
+                gameActive = false;
+                clearInterval(gameLoop);
+                // Clear any pending shape creation
+                const intervals = setInterval(() => {}, 1000);
+                clearInterval(intervals);
+                
+                startBtn.textContent = 'Play Again';
+                alert(`Game Over! Final Score: ${score}`);
+            }
+            
+            function resetGame() {
+                gameActive = false;
+                clearInterval(gameLoop);
+                score = 0;
+                lives = 3;
+                shapes = [];
+                scoreEl.textContent = score;
+                livesEl.textContent = lives;
+                createBins();
+                startBtn.textContent = 'Start Game';
+            }
+            
+            startBtn.addEventListener('click', () => {
+                if (!gameActive) {
+                    startGame();
+                } else {
+                    pauseGame();
+                }
+            });
+            
+            resetBtn.addEventListener('click', resetGame);
+            
+            createBins();
+        });
+    </script>
+</body>
+</html>

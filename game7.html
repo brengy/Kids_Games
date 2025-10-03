@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Alphabet Adventure</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Comic Sans MS', cursive, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            padding: 10px;
+        }
+        .game-container { 
+            width: 100%; 
+            max-width: 500px; 
+            background: white; 
+            border-radius: 20px; 
+            padding: 20px; 
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 { 
+            color: #ffd166; 
+            font-size: 2.2rem; 
+            margin-bottom: 15px;
+        }
+        .instructions { 
+            background: #ff9a9e; 
+            padding: 12px; 
+            border-radius: 15px; 
+            margin: 15px 0;
+            color: white;
+        }
+        .alphabet-grid { 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 10px; 
+            margin: 20px 0;
+        }
+        .letter { 
+            aspect-ratio: 1/1; 
+            background: #4ecdc4; 
+            border-radius: 10px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 1.8rem; 
+            font-weight: bold; 
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .letter.correct { 
+            background: #2ecc71; 
+            transform: scale(1.1);
+        }
+        .letter:active { 
+            transform: scale(0.95); 
+        }
+        .target { 
+            margin: 15px 0; 
+            padding: 15px; 
+            background: #ffd166; 
+            border-radius: 15px; 
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        button { 
+            padding: 12px 25px; 
+            font-size: 1.1rem; 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-weight: bold;
+            background: #ffd166; 
+            color: #667eea;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🔤 Alphabet Adventure</h1>
+        <div class="instructions">
+            <p>Find letters in alphabetical order from A to Z!</p>
+        </div>
+        <div class="target">
+            Find: <span id="current-target">A</span>
+        </div>
+        <div class="alphabet-grid" id="alphabet-grid">
+            <!-- Letters will be generated here -->
+        </div>
+        <button id="reset-btn">New Game</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const alphabetGrid = document.getElementById('alphabet-grid');
+            const currentTargetEl = document.getElementById('current-target');
+            const resetBtn = document.getElementById('reset-btn');
+            
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+            let currentTargetIndex = 0;
+            let letters = [];
+            
+            function createGame() {
+                alphabetGrid.innerHTML = '';
+                currentTargetIndex = 0;
+                currentTargetEl.textContent = alphabet[currentTargetIndex];
+                letters = [];
+                
+                // Create all letters
+                const letterArray = [...alphabet];
+                // Shuffle
+                for (let i = letterArray.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [letterArray[i], letterArray[j]] = [letterArray[j], letterArray[i]];
+                }
+                
+                letterArray.forEach(letter => {
+                    const letterEl = document.createElement('div');
+                    letterEl.className = 'letter';
+                    letterEl.textContent = letter;
+                    letterEl.dataset.value = letter;
+                    letterEl.addEventListener('click', () => checkLetter(letterEl));
+                    alphabetGrid.appendChild(letterEl);
+                    letters.push(letterEl);
+                });
+            }
+            
+            function checkLetter(letterEl) {
+                const value = letterEl.dataset.value;
+                
+                if (value === alphabet[currentTargetIndex]) {
+                    letterEl.classList.add('correct');
+                    currentTargetIndex++;
+                    
+                    if (currentTargetIndex < alphabet.length) {
+                        currentTargetEl.textContent = alphabet[currentTargetIndex];
+                    } else {
+                        setTimeout(() => {
+                            alert('Amazing! You completed the alphabet!');
+                        }, 500);
+                    }
+                }
+            }
+            
+            resetBtn.addEventListener('click', createGame);
+            createGame();
+        });
+    </script>
+</body>
+</html>

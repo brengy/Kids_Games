@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Number Sequence</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Comic Sans MS', cursive, sans-serif; 
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            padding: 10px;
+        }
+        .game-container { 
+            width: 100%; 
+            max-width: 500px; 
+            background: white; 
+            border-radius: 20px; 
+            padding: 20px; 
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 { 
+            color: #ff6b6b; 
+            font-size: 2.2rem; 
+            margin-bottom: 15px;
+        }
+        .instructions { 
+            background: #ffd166; 
+            padding: 12px; 
+            border-radius: 15px; 
+            margin: 15px 0;
+        }
+        .sequence-area { 
+            display: flex; 
+            justify-content: center; 
+            gap: 10px; 
+            margin: 20px 0; 
+            flex-wrap: wrap;
+        }
+        .number { 
+            width: 60px; 
+            height: 60px; 
+            background: #4ecdc4; 
+            border-radius: 15px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 1.8rem; 
+            font-weight: bold; 
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .number.correct { 
+            background: #2ecc71; 
+            transform: scale(1.1);
+        }
+        .number:active { 
+            transform: scale(0.95); 
+        }
+        .target { 
+            margin: 15px 0; 
+            padding: 15px; 
+            background: #ff9a9e; 
+            border-radius: 15px; 
+            font-size: 1.3rem;
+        }
+        button { 
+            padding: 12px 25px; 
+            font-size: 1.1rem; 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-weight: bold;
+            background: #ff6b6b; 
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🔢 Number Sequence</h1>
+        <div class="instructions">
+            <p>Tap numbers in the correct order from 1 to 10!</p>
+        </div>
+        <div class="target">
+            Next: <span id="current-target">1</span>
+        </div>
+        <div class="sequence-area" id="sequence-area">
+            <!-- Numbers will be generated here -->
+        </div>
+        <button id="reset-btn">New Game</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sequenceArea = document.getElementById('sequence-area');
+            const currentTargetEl = document.getElementById('current-target');
+            const resetBtn = document.getElementById('reset-btn');
+            
+            let currentTarget = 1;
+            let numbers = [];
+            
+            function createGame() {
+                sequenceArea.innerHTML = '';
+                currentTarget = 1;
+                currentTargetEl.textContent = currentTarget;
+                numbers = [];
+                
+                // Create numbers 1-10
+                const numArray = Array.from({length: 10}, (_, i) => i + 1);
+                // Shuffle
+                for (let i = numArray.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [numArray[i], numArray[j]] = [numArray[j], numArray[i]];
+                }
+                
+                numArray.forEach(num => {
+                    const number = document.createElement('div');
+                    number.className = 'number';
+                    number.textContent = num;
+                    number.dataset.value = num;
+                    number.addEventListener('click', () => checkNumber(number));
+                    sequenceArea.appendChild(number);
+                    numbers.push(number);
+                });
+            }
+            
+            function checkNumber(number) {
+                const value = parseInt(number.dataset.value);
+                
+                if (value === currentTarget) {
+                    number.classList.add('correct');
+                    currentTarget++;
+                    currentTargetEl.textContent = currentTarget;
+                    
+                    if (currentTarget > 10) {
+                        setTimeout(() => {
+                            alert('Great job! You completed the sequence!');
+                        }, 500);
+                    }
+                }
+            }
+            
+            resetBtn.addEventListener('click', createGame);
+            createGame();
+        });
+    </script>
+</body>
+</html>

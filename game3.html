@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Speed Tap Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 20px;
+            color: #ffcc00;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .game-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 15px 0;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .stat-box {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 12px 15px;
+            border-radius: 12px;
+            min-width: 120px;
+            margin: 8px;
+        }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #ffcc00;
+            margin-top: 5px;
+        }
+        
+        .target {
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, #ff3366, #cc0033);
+            border-radius: 50%;
+            margin: 25px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5rem;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(204, 0, 51, 0.7);
+            transition: transform 0.1s, background 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .target::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .target.active {
+            background: radial-gradient(circle, #4CAF50, #2E7D32);
+        }
+        
+        .target:active {
+            transform: scale(0.95);
+        }
+        
+        .target:active::before {
+            opacity: 1;
+        }
+        
+        .instructions {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 204, 0, 0.2);
+            border-radius: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #ff8c00, #ff3366);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            font-size: 1.3rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(255, 51, 102, 0.4);
+            transition: all 0.2s;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 8px rgba(255, 51, 102, 0.4);
+        }
+        
+        .btn-restart {
+            background: linear-gradient(to right, #2196F3, #21CBF3);
+        }
+        
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 150, 136, 0.3);
+            border-radius: 15px;
+            display: none;
+        }
+        
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 51, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
+        }
+        
+        .mobile-warning {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 51, 102, 0.9);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        @media (max-width: 500px) {
+            .target {
+                width: 150px;
+                height: 150px;
+                font-size: 4rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .stat-box {
+                min-width: 100px;
+                padding: 10px;
+            }
+            
+            .stat-value {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-warning">For best experience, hold your phone vertically</div>
+    
+    <div class="container">
+        <h1>⚡ Speed Tap Challenge ⚡</h1>
+        
+        <div class="game-info">
+            <p>Test your reaction time and tapping speed!</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div>Reaction Time</div>
+                <div id="reaction-time" class="stat-value">0.00s</div>
+            </div>
+            <div class="stat-box">
+                <div>Taps/Second</div>
+                <div id="tap-speed" class="stat-value">0.00</div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <p>When the circle turns <span style="color:#4CAF50">GREEN</span>, tap it as fast as you can!</p>
+        </div>
+        
+        <div class="target" id="target">
+            ⚡
+        </div>
+        
+        <button class="btn" id="start-btn">Start Test</button>
+        <button class="btn btn-restart" id="restart-btn" style="display:none;">Restart</button>
+        
+        <div class="results" id="results">
+            <h3>Your Results:</h3>
+            <p>Average Reaction Time: <span id="avg-reaction">0.00s</span></p>
+            <p>Max Taps/Second: <span id="max-taps">0.00</span></p>
+            <p>Performance: <span id="performance">-</span></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM elements
+            const target = document.getElementById('target');
+            const startBtn = document.getElementById('start-btn');
+            const restartBtn = document.getElementById('restart-btn');
+            const reactionTimeEl = document.getElementById('reaction-time');
+            const tapSpeedEl = document.getElementById('tap-speed');
+            const resultsEl = document.getElementById('results');
+            const avgReactionEl = document.getElementById('avg-reaction');
+            const maxTapsEl = document.getElementById('max-taps');
+            const performanceEl = document.getElementById('performance');
+            const mobileWarning = document.querySelector('.mobile-warning');
+            
+            // Game state
+            let gameState = 'waiting'; // waiting, ready, active, finished
+            let startTime = 0;
+            let reactionTime = 0;
+            let tapCount = 0;
+            let tapStartTime = 0;
+            let maxTapsPerSecond = 0;
+            let reactionTimes = [];
+            
+            // Check if mobile device
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            // Show mobile warning if needed
+            if (isMobile && window.innerHeight > window.innerWidth) {
+                mobileWarning.style.display = 'block';
+                setTimeout(() => {
+                    mobileWarning.style.display = 'none';
+                }, 5000);
+            }
+            
+            // Start the game
+            startBtn.addEventListener('click', () => {
+                resetGame();
+                startBtn.style.display = 'none';
+                restartBtn.style.display = 'inline-block';
+                resultsEl.style.display = 'none';
+                
+                // Set to ready state
+                gameState = 'ready';
+                target.classList.remove('active');
+                target.textContent = 'Wait...';
+                target.style.background = 'radial-gradient(circle, #ff9800, #f57c00)';
+                
+                // Random delay before activation (1-3 seconds)
+                const delay = Math.floor(Math.random() * 2000) + 1000;
+                
+                setTimeout(() => {
+                    if (gameState === 'ready') {
+                        activateTarget();
+                    }
+                }, delay);
+            });
+            
+            // Restart game
+            restartBtn.addEventListener('click', () => {
+                startBtn.click();
+            });
+            
+            // Target click handler
+            target.addEventListener('click', () => {
+                if (gameState === 'ready') {
+                    // Too early! Calculate penalty
+                    const tooEarlyTime = Date.now() - startTime;
+                    reactionTime = Math.max(0.1, tooEarlyTime / 1000); // Minimum 100ms penalty
+                    reactionTimeEl.textContent = reactionTime.toFixed(2) + 's';
+                    target.textContent = 'Too Early!';
+                    target.style.background = 'radial-gradient(circle, #f44336, #d32f2f)';
+                    setTimeout(() => {
+                        startBtn.click(); // Restart automatically
+                    }, 1500);
+                } 
+                else if (gameState === 'active') {
+                    // First tap - record reaction time
+                    if (tapCount === 0) {
+                        reactionTime = (Date.now() - startTime) / 1000;
+                        reactionTimes.push(reactionTime);
+                        reactionTimeEl.textContent = reactionTime.toFixed(2) + 's';
+                        tapStartTime = Date.now();
+                    }
+                    
+                    tapCount++;
+                    
+                    // Calculate taps per second
+                    const elapsed = (Date.now() - tapStartTime) / 1000;
+                    const tapsPerSecond = tapCount / elapsed;
+                    
+                    if (tapsPerSecond > maxTapsPerSecond) {
+                        maxTapsPerSecond = tapsPerSecond;
+                    }
+                    
+                    tapSpeedEl.textContent = tapsPerSecond.toFixed(2);
+                    
+                    // Visual feedback
+                    target.classList.add('pulse');
+                    setTimeout(() => {
+                        target.classList.remove('pulse');
+                    }, 300);
+                    
+                    // End game after 5 seconds of tapping
+                    if (elapsed >= 5) {
+                        endGame();
+                    }
+                }
+            });
+            
+            // Activate the target
+            function activateTarget() {
+                if (gameState !== 'ready') return;
+                
+                gameState = 'active';
+                startTime = Date.now();
+                target.classList.add('active');
+                target.textContent = 'TAP!';
+                target.style.background = 'radial-gradient(circle, #4CAF50, #2E7D32)';
+            }
+            
+            // End the game and show results
+            function endGame() {
+                gameState = 'finished';
+                
+                // Calculate average reaction time
+                const avgReaction = reactionTimes.length > 0 
+                    ? reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length 
+                    : 0;
+                
+                // Determine performance rating
+                let performance = '';
+                if (avgReaction < 0.2) {
+                    performance = '⚡ Lightning Fast!';
+                } else if (avgReaction < 0.3) {
+                    performance = '🚀 Super Quick!';
+                } else if (avgReaction < 0.4) {
+                    performance = '👍 Pretty Fast!';
+                } else if (avgReaction < 0.5) {
+                    performance = '👌 Good!';
+                } else {
+                    performance = '🐢 Keep Practicing!';
+                }
+                
+                // Update results
+                avgReactionEl.textContent = avgReaction.toFixed(2) + 's';
+                maxTapsEl.textContent = maxTapsPerSecond.toFixed(2);
+                performanceEl.textContent = performance;
+                resultsEl.style.display = 'block';
+            }
+            
+            // Reset game state
+            function resetGame() {
+                gameState = 'waiting';
+                reactionTime = 0;
+                tapCount = 0;
+                maxTapsPerSecond = 0;
+                reactionTimes = [];
+                reactionTimeEl.textContent = '0.00s';
+                tapSpeedEl.textContent = '0.00';
+                target.textContent = '⚡';
+                target.classList.remove('active', 'pulse');
+                target.style.background = 'radial-gradient(circle, #ff3366, #cc0033)';
+            }
+            
+            // Prevent zoom on double-tap
+            document.addEventListener('touchstart', function(event) {
+                if (event.touches.length > 1) {
+                    event.preventDefault();
+                }
+            });
+            
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(event) {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+        });
+    </script>
+</body>
+</html>

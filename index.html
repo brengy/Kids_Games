@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My HTML Games</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #1f2937, #4b5563);
+      margin: 0;
+      padding: 40px;
+      color: #fff;
+    }
+    h1 {
+      margin-bottom: 40px;
+      font-size: 2.5rem;
+      color: #f9fafb;
+    }
+    .game-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .game-card {
+      background: #374151;
+      padding: 25px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .game-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      background: #4b5563;
+    }
+    .game-card h2 {
+      margin: 0;
+      font-size: 1.3rem;
+      color: #f3f4f6;
+    }
+    .game-card p {
+      margin: 8px 0 0;
+      font-size: 0.9rem;
+      color: #d1d5db;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎮 My HTML Games</h1>
+
+  <div class="game-container">
+    <div class="game-card" onclick="location.href='game1.html'">
+      <h2>Game 1</h2>
+      <p>Click to play</p>
+    </div>
+    <div class="game-card" onclick="location.href='game2.html'">
+      <h2>Game 2</h2>
+      <p>Click to play</p>
+    </div>
+    <div class="game-card" onclick="location.href='game3.html'">
+      <h2>Game 3</h2>
+      <p>Click to play</p>
+    </div>
+    <div class="game-card" onclick="location.href='game4.html'">
+      <h2>Game 4</h2>
+      <p>Click to play</p>
+    </div>
+    <div class="game-card" onclick="location.href='game5.html'">
+      <h2>Game 5</h2>
+      <p>Click to play</p>
+    </div>
+    <div class="game-card" onclick="location.href='game6.html'">
+      <h2>Game 6</h2>
+      <p>Click to play</p>
+    </div>
+    <div class="game-card" onclick="location.href='game7.html'">
+      <h2>Game 7</h2>
+      <p>Click to play</p>
+    </div>
+    <div class="game-card" onclick="location.href='game8.html'">
+      <h2>Game 8</h2>
+      <p>Click to play</p>
+    </div>
+  </div>
+
+</body>
+</html>
