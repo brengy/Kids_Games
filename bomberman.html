@@ -18,38 +18,60 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 10px;
+            padding: 5px;
             color: white;
-            overflow: hidden;
-            touch-action: none;
+            overflow-x: hidden;
+            overflow-y: auto;
+            touch-action: pan-y;
         }
         
         .game-container {
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
             background: rgba(0, 0, 0, 0.85);
-            border-radius: 25px;
-            padding: 20px;
+            border-radius: 20px;
+            padding: 15px;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
             text-align: center;
             position: relative;
+            margin: 10px auto;
         }
         
         h1 {
             color: #4dff4d;
-            font-size: 2.2rem;
-            margin-bottom: 15px;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
             text-shadow: 0 0 10px rgba(77, 255, 77, 0.7);
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 5px;
+            }
         }
         
         .game-info {
             display: flex;
             justify-content: space-around;
             background: rgba(255, 204, 0, 0.2);
-            padding: 12px;
-            border-radius: 15px;
-            margin: 15px 0;
-            font-size: 1.1rem;
+            padding: 10px 5px;
+            border-radius: 12px;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        @media (max-width: 480px) {
+            .game-info {
+                font-size: 0.8rem;
+                padding: 8px 3px;
+            }
+            .game-info > div {
+                flex: 1 1 30%;
+                min-width: 80px;
+            }
         }
         
         .game-board {
@@ -57,20 +79,40 @@
             grid-template-columns: repeat(11, 1fr);
             gap: 2px;
             background: #2c3e50;
-            padding: 10px;
-            border-radius: 15px;
-            margin: 15px 0;
+            padding: 8px;
+            border-radius: 12px;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
             aspect-ratio: 1/1;
+        }
+        
+        @media (max-width: 480px) {
+            .game-board {
+                padding: 5px;
+                gap: 1px;
+            }
         }
         
         .cell {
             background: #34495e;
-            border-radius: 4px;
+            border-radius: 3px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             position: relative;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        @media (max-width: 480px) {
+            .cell {
+                font-size: 1.2rem;
+                border-radius: 2px;
+            }
         }
         
         .wall { background: #7f8c8d; }
@@ -118,72 +160,134 @@
         }
         
         .controls {
-            display: flex;
+            display: grid;
+            grid-template-areas: 
+                ". up ."
+                "left bomb right"
+                ". down .";
+            gap: 10px;
             justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
-            flex-wrap: wrap;
+            align-items: center;
+            margin: 20px auto;
+            max-width: 300px;
+            padding: 10px;
         }
         
+        @media (max-width: 480px) {
+            .controls {
+                gap: 8px;
+                margin: 15px auto;
+                max-width: 280px;
+            }
+        }
+        
+        #up-btn { grid-area: up; }
+        #down-btn { grid-area: down; }
+        #left-btn { grid-area: left; }
+        #right-btn { grid-area: right; }
+        #bomb-btn { grid-area: bomb; }
+        
         .direction-btn {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             background: #4dff4d;
-            border: none;
-            border-radius: 50%;
-            font-size: 1.8rem;
+            border: 3px solid #2ecc71;
+            border-radius: 15px;
+            font-size: 2rem;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
             color: #000;
             font-weight: bold;
-            transition: transform 0.2s;
+            transition: all 0.2s;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .direction-btn:active {
             transform: scale(0.9);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        @media (max-width: 480px) {
+            .direction-btn {
+                width: 65px;
+                height: 65px;
+                font-size: 1.8rem;
+            }
         }
         
         .bomb-btn {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             background: linear-gradient(135deg, #f39c12, #e67e22);
-            border: none;
+            border: 3px solid #d68910;
             border-radius: 50%;
-            font-size: 2rem;
+            font-size: 2.2rem;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
             color: white;
             font-weight: bold;
-            transition: transform 0.2s;
+            transition: all 0.2s;
             box-shadow: 0 6px 15px rgba(230, 126, 34, 0.5);
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .bomb-btn:active {
             transform: scale(0.95);
+            box-shadow: 0 3px 8px rgba(230, 126, 34, 0.5);
+        }
+        
+        @media (max-width: 480px) {
+            .bomb-btn {
+                width: 75px;
+                height: 75px;
+                font-size: 2rem;
+            }
         }
         
         .instructions {
             background: rgba(255, 204, 0, 0.15);
-            padding: 15px;
-            border-radius: 15px;
-            margin: 15px 0;
-            font-size: 0.95rem;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 10px 0;
+            font-size: 0.85rem;
             line-height: 1.4;
+        }
+        
+        @media (max-width: 480px) {
+            .instructions {
+                font-size: 0.75rem;
+                padding: 10px;
+                line-height: 1.3;
+            }
         }
         
         .level-indicator {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 15px;
+            right: 15px;
             background: rgba(52, 152, 219, 0.8);
             padding: 5px 10px;
             border-radius: 10px;
             font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 480px) {
+            .level-indicator {
+                top: 10px;
+                right: 10px;
+                padding: 4px 8px;
+                font-size: 0.8rem;
+            }
         }
         
         @keyframes pulse {
@@ -230,18 +334,13 @@
         
         <div class="game-board" id="game-board"></div>
         
-        <div class="instructions">
-            <p><strong>How to Play:</strong> Use arrows to move. Drop bombs with 💣 button to destroy red bricks. Find the KEY 🔑 hidden in a brick! Then go to the DOOR 🔒 to unlock it and win! Watch out - bombs can kill you!</p>
-            <p><strong>Power-ups:</strong> 🔥 Fire Range • 💣 Extra Bombs • ⚡ Speed Boost</p>
-        </div>
+       
         
         <div class="controls">
             <button class="direction-btn" id="up-btn">↑</button>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button class="direction-btn" id="left-btn">←</button>
-                <button class="bomb-btn" id="bomb-btn">💣</button>
-                <button class="direction-btn" id="right-btn">→</button>
-            </div>
+            <button class="direction-btn" id="left-btn">←</button>
+            <button class="bomb-btn" id="bomb-btn">💣</button>
+            <button class="direction-btn" id="right-btn">→</button>
             <button class="direction-btn" id="down-btn">↓</button>
         </div>
     </div>
@@ -713,6 +812,27 @@
         }
         
         // Event listeners
+        upBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            movePlayer(0, -1);
+        });
+        downBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            movePlayer(0, 1);
+        });
+        leftBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            movePlayer(-1, 0);
+        });
+        rightBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            movePlayer(1, 0);
+        });
+        bombBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            placeBomb();
+        });
+        
         upBtn.addEventListener('click', () => movePlayer(0, -1));
         downBtn.addEventListener('click', () => movePlayer(0, 1));
         leftBtn.addEventListener('click', () => movePlayer(-1, 0));
