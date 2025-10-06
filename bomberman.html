@@ -13,7 +13,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            background: linear-gradient(135deg, #1a0033, #4a0e4e, #2d1b69, #1a0033);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -28,20 +28,21 @@
         .game-container {
             width: 100%;
             max-width: 600px;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(20, 0, 40, 0.95);
             border-radius: 20px;
             padding: 15px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 15px 40px rgba(138, 43, 226, 0.4);
+            border: 2px solid rgba(147, 51, 234, 0.3);
             text-align: center;
             position: relative;
             margin: 10px auto;
         }
         
         h1 {
-            color: #4dff4d;
+            color: #c084fc;
             font-size: 1.8rem;
             margin-bottom: 10px;
-            text-shadow: 0 0 10px rgba(77, 255, 77, 0.7);
+            text-shadow: 0 0 15px rgba(192, 132, 252, 0.8), 0 0 30px rgba(168, 85, 247, 0.4);
         }
         
         @media (max-width: 480px) {
@@ -54,13 +55,14 @@
         .game-info {
             display: flex;
             justify-content: space-around;
-            background: rgba(255, 204, 0, 0.2);
+            background: rgba(147, 51, 234, 0.25);
             padding: 10px 5px;
             border-radius: 12px;
             margin: 10px 0;
             font-size: 0.9rem;
             flex-wrap: wrap;
             gap: 5px;
+            border: 1px solid rgba(168, 85, 247, 0.3);
         }
         
         @media (max-width: 480px) {
@@ -78,7 +80,7 @@
             display: grid;
             grid-template-columns: repeat(11, 1fr);
             gap: 2px;
-            background: #2c3e50;
+            background: #1e0a3c;
             padding: 8px;
             border-radius: 12px;
             margin: 10px 0;
@@ -87,6 +89,7 @@
             margin-left: auto;
             margin-right: auto;
             aspect-ratio: 1/1;
+            border: 2px solid rgba(147, 51, 234, 0.4);
         }
         
         @media (max-width: 480px) {
@@ -97,7 +100,7 @@
         }
         
         .cell {
-            background: #34495e;
+            background: #2d1655;
             border-radius: 3px;
             display: flex;
             justify-content: center;
@@ -115,11 +118,20 @@
             }
         }
         
-        .wall { background: #7f8c8d; }
-        .brick { background: #e74c3c; }
+        .wall { background: #4a1f75; }
+        .brick { background: #7c3aed; }
         .player { 
-            background: radial-gradient(circle, #3498db, #2980b9);
+            background: radial-gradient(circle, #a78bfa, #8b5cf6);
             animation: pulse 2s infinite;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        .player-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
         .bomb { 
             background: radial-gradient(circle, #f39c12, #e67e22);
@@ -190,18 +202,18 @@
         .direction-btn {
             width: 70px;
             height: 70px;
-            background: #4dff4d;
-            border: 3px solid #2ecc71;
+            background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+            border: 3px solid #7c3aed;
             border-radius: 15px;
             font-size: 2rem;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #000;
+            color: #fff;
             font-weight: bold;
             transition: all 0.2s;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(167, 139, 250, 0.4);
             user-select: none;
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
@@ -209,7 +221,7 @@
         
         .direction-btn:active {
             transform: scale(0.9);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 8px rgba(167, 139, 250, 0.4);
         }
         
         @media (max-width: 480px) {
@@ -223,8 +235,8 @@
         .bomb-btn {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, #f39c12, #e67e22);
-            border: 3px solid #d68910;
+            background: linear-gradient(135deg, #c084fc, #a855f7);
+            border: 3px solid #9333ea;
             border-radius: 50%;
             font-size: 2.2rem;
             cursor: pointer;
@@ -234,7 +246,7 @@
             color: white;
             font-weight: bold;
             transition: all 0.2s;
-            box-shadow: 0 6px 15px rgba(230, 126, 34, 0.5);
+            box-shadow: 0 6px 20px rgba(192, 132, 252, 0.5);
             user-select: none;
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
@@ -242,7 +254,7 @@
         
         .bomb-btn:active {
             transform: scale(0.95);
-            box-shadow: 0 3px 8px rgba(230, 126, 34, 0.5);
+            box-shadow: 0 3px 12px rgba(192, 132, 252, 0.5);
         }
         
         @media (max-width: 480px) {
@@ -254,12 +266,13 @@
         }
         
         .instructions {
-            background: rgba(255, 204, 0, 0.15);
+            background: rgba(147, 51, 234, 0.2);
             padding: 12px;
             border-radius: 12px;
             margin: 10px 0;
             font-size: 0.85rem;
             line-height: 1.4;
+            border: 1px solid rgba(168, 85, 247, 0.3);
         }
         
         @media (max-width: 480px) {
@@ -274,11 +287,12 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            background: rgba(52, 152, 219, 0.8);
+            background: rgba(139, 92, 246, 0.9);
             padding: 5px 10px;
             border-radius: 10px;
             font-weight: bold;
             font-size: 0.9rem;
+            border: 1px solid rgba(167, 139, 250, 0.5);
         }
         
         @media (max-width: 480px) {
@@ -291,9 +305,9 @@
         }
         
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(52, 152, 219, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(167, 139, 250, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0); }
         }
         
         @keyframes bomb-pulse {
@@ -511,13 +525,31 @@
                             break;
                         case CELL_TYPES.PLAYER:
                             cell.classList.add('player');
-                            cell.textContent = '👶';
+                            const playerImg = document.createElement('img');
+                            playerImg.src = 'image1.png';
+                            playerImg.className = 'player-img';
+                            playerImg.alt = 'Player';
+                            playerImg.onerror = function() {
+                                // Fallback to emoji if image not found
+                                cell.textContent = '👶';
+                            };
+                            cell.appendChild(playerImg);
                             break;
                         case CELL_TYPES.BOMB:
                             cell.classList.add('bomb');
                             if (hasPlayer) {
-                                cell.textContent = '👶💣';
-                                cell.style.fontSize = '1.4rem';
+                                const playerImg = document.createElement('img');
+                                playerImg.src = 'image1.png';
+                                playerImg.className = 'player-img';
+                                playerImg.style.width = '50%';
+                                playerImg.style.height = '50%';
+                                playerImg.style.display = 'inline-block';
+                                playerImg.onerror = function() {
+                                    cell.textContent = '👶💣';
+                                    cell.style.fontSize = '1.4rem';
+                                };
+                                cell.appendChild(playerImg);
+                                cell.innerHTML += '💣';
                             } else {
                                 cell.textContent = '💣';
                             }
@@ -529,8 +561,18 @@
                         case CELL_TYPES.KEY:
                             cell.classList.add('key');
                             if (hasPlayer) {
-                                cell.textContent = '👶🔑';
-                                cell.style.fontSize = '1.4rem';
+                                const playerImg = document.createElement('img');
+                                playerImg.src = 'image1.png';
+                                playerImg.className = 'player-img';
+                                playerImg.style.width = '50%';
+                                playerImg.style.height = '50%';
+                                playerImg.style.display = 'inline-block';
+                                playerImg.onerror = function() {
+                                    cell.textContent = '👶🔑';
+                                    cell.style.fontSize = '1.4rem';
+                                };
+                                cell.appendChild(playerImg);
+                                cell.innerHTML += '🔑';
                             } else {
                                 cell.textContent = '🔑';
                             }
@@ -541,8 +583,18 @@
                                 cell.classList.add('unlocked');
                             }
                             if (hasPlayer) {
-                                cell.textContent = hasKey ? '👶🔓' : '👶🔒';
-                                cell.style.fontSize = '1.4rem';
+                                const playerImg = document.createElement('img');
+                                playerImg.src = 'image1.png';
+                                playerImg.className = 'player-img';
+                                playerImg.style.width = '50%';
+                                playerImg.style.height = '50%';
+                                playerImg.style.display = 'inline-block';
+                                playerImg.onerror = function() {
+                                    cell.textContent = hasKey ? '👶🔓' : '👶🔒';
+                                    cell.style.fontSize = '1.4rem';
+                                };
+                                cell.appendChild(playerImg);
+                                cell.innerHTML += hasKey ? '🔓' : '🔒';
                             } else {
                                 cell.textContent = hasKey ? '🔓' : '🔒';
                             }
@@ -550,8 +602,18 @@
                         case CELL_TYPES.POWERUP_FIRE:
                             cell.classList.add('powerup-fire');
                             if (hasPlayer) {
-                                cell.textContent = '👶🔥';
-                                cell.style.fontSize = '1.4rem';
+                                const playerImg = document.createElement('img');
+                                playerImg.src = 'image1.png';
+                                playerImg.className = 'player-img';
+                                playerImg.style.width = '50%';
+                                playerImg.style.height = '50%';
+                                playerImg.style.display = 'inline-block';
+                                playerImg.onerror = function() {
+                                    cell.textContent = '👶🔥';
+                                    cell.style.fontSize = '1.4rem';
+                                };
+                                cell.appendChild(playerImg);
+                                cell.innerHTML += '🔥';
                             } else {
                                 cell.textContent = '🔥';
                             }
@@ -559,8 +621,18 @@
                         case CELL_TYPES.POWERUP_BOMB:
                             cell.classList.add('powerup-bomb');
                             if (hasPlayer) {
-                                cell.textContent = '👶💣';
-                                cell.style.fontSize = '1.4rem';
+                                const playerImg = document.createElement('img');
+                                playerImg.src = 'image1.png';
+                                playerImg.className = 'player-img';
+                                playerImg.style.width = '50%';
+                                playerImg.style.height = '50%';
+                                playerImg.style.display = 'inline-block';
+                                playerImg.onerror = function() {
+                                    cell.textContent = '👶💣';
+                                    cell.style.fontSize = '1.4rem';
+                                };
+                                cell.appendChild(playerImg);
+                                cell.innerHTML += '💣';
                             } else {
                                 cell.textContent = '💣';
                             }
@@ -568,8 +640,18 @@
                         case CELL_TYPES.POWERUP_SPEED:
                             cell.classList.add('powerup-speed');
                             if (hasPlayer) {
-                                cell.textContent = '👶⚡';
-                                cell.style.fontSize = '1.4rem';
+                                const playerImg = document.createElement('img');
+                                playerImg.src = 'image1.png';
+                                playerImg.className = 'player-img';
+                                playerImg.style.width = '50%';
+                                playerImg.style.height = '50%';
+                                playerImg.style.display = 'inline-block';
+                                playerImg.onerror = function() {
+                                    cell.textContent = '👶⚡';
+                                    cell.style.fontSize = '1.4rem';
+                                };
+                                cell.appendChild(playerImg);
+                                cell.innerHTML += '⚡';
                             } else {
                                 cell.textContent = '⚡';
                             }
@@ -577,7 +659,14 @@
                         default:
                             if (hasPlayer) {
                                 cell.classList.add('player');
-                                cell.textContent = '👶';
+                                const playerImg = document.createElement('img');
+                                playerImg.src = 'image1.png';
+                                playerImg.className = 'player-img';
+                                playerImg.alt = 'Player';
+                                playerImg.onerror = function() {
+                                    cell.textContent = '👶';
+                                };
+                                cell.appendChild(playerImg);
                             }
                     }
                     
